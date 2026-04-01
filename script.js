@@ -1,21 +1,19 @@
 /* ============================================================
-   AjayAI Chat Assistant — Groq API Version (Free, No Limits)
+   AjayAI Chat Assistant 
    ============================================================ */
 
 // ── CONFIG ──
-// 1. Go to console.groq.com/keys
-// 2. Sign up free (no credit card)
-// 3. Click "Create API Key" and paste it below
+
 const API_KEY = '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';
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const MODEL   = 'llama-3.3-70b-versatile'; // Free Llama 3 model via Groq
+const MODEL   = 'llama-3.3-70b-versatile'; // Latest free Llama 3.3 model via Groq
 
 // ── SYSTEM PROMPT ──
-const SYSTEM_PROMPT = `You are AjayAI, a helpful and friendly AI assistant built by Ajay Thakur,
-a Master of Computer Science graduate from the University of Wollongong, Australia.
-You are knowledgeable about software engineering, game development, Python, C++, Unity,
-web development, cloud computing, and general programming topics.
-Be concise, helpful, and friendly. When showing code, always use proper markdown code blocks.`;
+const SYSTEM_PROMPT = `You are AjayAI, a helpful and friendly AI assistant.
+You are knowledgeable about software engineering, programming, web development,
+game development, Python, C++, JavaScript, cloud computing, databases, and general tech topics.
+Be concise, clear, and friendly. Format code using proper markdown code blocks.
+When answering questions, give practical and easy to understand explanations.`;
 
 // ── STATE ──
 let conversations = {};
@@ -227,6 +225,9 @@ function addToHistory(chatId) {
   const history = document.getElementById('history');
   const chat    = conversations[chatId];
   if (document.getElementById('hist_' + chatId)) return;
+  // Hide empty state
+  const empty = document.getElementById('historyEmpty');
+  if (empty) empty.style.display = 'none';
 
   const item = document.createElement('div');
   item.className = 'history-item active';
@@ -311,7 +312,10 @@ function autoResize(el) {
 
 // ── SIDEBAR TOGGLE ──
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('sidebarOverlay');
+  const isOpen   = sidebar.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
 }
 
 // ── ERROR MESSAGES ──
