@@ -1,24 +1,28 @@
-// this file runs on Vercel's servers, not in the browser
-// so the API key stored here as an environment variable is completely hidden
-// the browser never sees it
-
 export default async function handler(req, res) {
 
-  // only allow POST requests, reject everything else
+  // handle the preflight request that browsers send before the real request
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(200).end();
+  }
+
+  // allow requests from any origin including github pages
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Only POST requests are allowed' });
   }
 
-  // grab the API key from Vercel's environment variables
-  // you set this in the Vercel dashboard, it never appears in your code
   var groqApiKey = process.env.GROQ_API_KEY;
 
-  // if the key is missing, return an error
   if (!groqApiKey) {
     return res.status(500).json({ error: 'API key is not configured on the server' });
   }
 
-  // get the messages the frontend sent us
   var messages = req.body.messages;
 
   if (!messages || !Array.isArray(messages)) {
@@ -26,7 +30,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // now we call Groq from the server using the hidden key
     var groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -41,7 +44,6 @@ export default async function handler(req, res) {
       })
     });
 
-    // if Groq returned an error, pass it back to the frontend
     if (!groqResponse.ok) {
       var errorData = await groqResponse.json().catch(function() { return {}; });
       var errorMessage = errorData.error ? errorData.error.message : 'Groq API error ' + groqResponse.status;
@@ -49,8 +51,6 @@ export default async function handler(req, res) {
     }
 
     var data = await groqResponse.json();
-
-    // send the AI reply back to the frontend
     return res.status(200).json({ reply: data.choices[0].message.content });
 
   } catch (err) {
