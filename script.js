@@ -13,7 +13,7 @@
 // this is the URL of our own server that handles the API call
 // when running locally it goes to the Vercel dev server
 // when live on the internet it goes to your Vercel deployment automatically
-var PROXY_URL = 'https://ai-chat-assistant-dpa2qntpb-ajaythakur2923s-projects.vercel.app/api/chat';
+var PROXY_URL = 'https://ai-chat-assistant-flax.vercel.app/api/chat';
 
 // this tells the AI how to behave
 var SYSTEM_PROMPT = 'You are a helpful and friendly AI assistant. You are good at explaining things clearly, helping with code, answering questions about technology, and general topics. Be concise and easy to understand.';
